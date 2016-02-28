@@ -1,0 +1,22 @@
+{
+  "name": "node-thumb",
+  "version": "1.0.0",
+  "description": "Microservice to resize picture",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "thumb",
+    "resize",
+    "node"
+  ],
+  "author": "Marco Cattaneo",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.13.4",
+    "gm": "^1.21.1",
+    "image-size": "^0.4.0",
+    "url": "^0.11.0"
+  }
+}
