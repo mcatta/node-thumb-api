@@ -1,7 +1,7 @@
 var express = require('express'),
 	  router = new express.Router(),
 		resize = require('../modules/resize'),
-		cache9 = require('../modules/cache'),
+		cache = require('../modules/cache'),
 		config = require('../config.js');
 
 /**
@@ -18,13 +18,18 @@ router.execute = function(req, res, next) {
 	 */
 	var width = req.params.width;
   var height = req.params.height;
-  var url = req.params.url;
+  var url = res.locals.url;
+
+	console.log('GET params: ' + width + ' ' + height + ' ' + url);
 
 	if (width && height && url) {
 
 		resize.resizePic(width, height, url, {
 			success: function(filePath) {
 
+				/*
+ 				 * Return resized file
+				 */
 				var options = {
 				  root: config.root,
 				  dotfiles: 'deny',
@@ -36,8 +41,7 @@ router.execute = function(req, res, next) {
 
 				res.sendFile(filePath, options, function (err) {
 			    if (err) {
-			      console.log(err);
-			      res.status(err.status).end();
+			      res.sendStatus(err.status).end();
 			    }
 			    else {
 			      console.log('Sent:', filePath);
@@ -46,13 +50,20 @@ router.execute = function(req, res, next) {
 
 			},
 			error: function(err) {
-				res.status(505);
+
+				/*
+  		   * On resize error
+				 */
+				res.sendStatus(505);
 			}
 		});
 
   } else {
 
-    res.status(403);
+		/*
+     * Miss params
+		 */
+    res.sendStatus(505);
 
   }
 
@@ -69,18 +80,67 @@ router.check = function(req, res, next) {
 
 	var url = req.params.url;
 
-	resize.checkFileUrl(url, function(errCode) {
+	resize.checkFileUrl(url, function(errCode, newPath) {
 
 		if (errCode)
-			res.status(errorCode);
-		else
+			res.sendStatus(errCode);
+		else {
+			res.locals.url = newPath;
 			next();
+		}
 
 	});
 
 },
 
+/**
+ * Cache function, if file already exists return it, else resize new file
+ * @param  {[type]}   req  [description]
+ * @param  {[type]}   res  [description]
+ * @param  {Function} next [description]
+ * @return {[type]}        [description]
+ */
 router.cache = function(req, res, next) {
+
+	cache.checkCachedFile({
+		width: req.params.width,
+		height: req.params.height,
+		url: req.params.url
+	}, function(exists, filePath) {
+
+		/**
+		 * File exsists
+		 */
+		if (exists) {
+			var options = {
+
+				/*
+ 				 *
+				 */
+				root: config.root,
+				dotfiles: 'deny',
+				headers: {
+						'x-timestamp': Date.now(),
+						'x-sent': true
+				}
+			};
+
+			res.sendFile(filePath, options, function (err) {
+				if (err) {
+					console.log(err);
+					res.sendStatus(err.status).end();
+				}
+				else {
+					console.log('Sent:', filePath);
+				}
+			});
+
+		} else {
+			// Continue resizing...
+			next();
+		}
+
+	});
 
 }
 

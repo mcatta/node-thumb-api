@@ -13,7 +13,7 @@ var resize = require('./route/resize');
 // GET /resize
 app.route('/resize/w:width/h:height/:url')
 	.get(resize.check)
-	//cache
+	.get(resize.cache)
 	.get(resize.execute);
 
 console.log('working on port 3031...');

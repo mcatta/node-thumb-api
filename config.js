@@ -1,5 +1,5 @@
 module.exports = {
-  freeUse : true,
+  allowExternal : false,
   localHostAllowed : [
     'www.chiharubatolecrostate.com'
   ],

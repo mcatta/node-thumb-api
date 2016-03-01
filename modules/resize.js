@@ -2,6 +2,7 @@ var fs = require('fs'),
     gm = require('gm').subClass({imageMagick: true}),
     http = require('http'),
     url = require('url'),
+    cache = require('./cache.js'),
     sizeOf = require('image-size'),
     config = require('../config.js');
 
@@ -14,43 +15,65 @@ module.exports = {
    */
   checkFileUrl : function(reqUrl, callback) {
 
-     var options = {
-         method: 'HEAD',
-         host: url.parse(reqUrl).host,
-         port: 80,
-         path: url.parse(reqUrl).pathname
-     };
+    /*
+     * If external host file are allowed
+     */
+    if (config.allowExternal) {
 
-     var req = http.request(options, function (r) {
+      module.exports.checkRemoteFile(reqUrl, function(exists) {
 
-       // exists
-       if (r.statusCode == 200) {
+        if (exists)
+          callback(undefined, reqUrl);
+        else
+          callback(404);
 
-         /*
-          * Verify url
-          */
-         if (config.freeUse) {
-           callback();
+      });
 
-         } else {
+    } else {
 
-            // Check if allowed
-            if (config.localHostAllowed.indexOf(url.parse(reqUrl).host) > 0) {
-              callback();
-            } else {
-              callback(403);
-            }
+      if (config.localHostAllowed.indexOf(url.parse(reqUrl).host) > 0) {
 
-         }
+        /*
+         * Host allowed, check if local file exists
+         */
+        var reqUrl = reqUrl.replace('http://www.', '/var/www/');
+        fs.exists(reqUrl, function(exists) {
+           callback(exists ? undefined : 200, reqUrl);
+        });
 
-       } else {
-         // not exists
-         callback(r.statusCode);
-       }
+      } else {
 
-     });
-     req.end();
+        /*
+         * Permission denied
+         */
+        callback(403);
 
+      }
+
+    }
+
+  },
+
+  /**
+   * Check if external file exists
+   * @param  {[type]} url [description]
+   * @return {[type]}     [description]
+   */
+  checkRemoteFile: function(reqUrl, callback) {
+    var options = {
+        method: 'HEAD',
+        host: url.parse(reqUrl).host,
+        port: 80,
+        path: url.parse(reqUrl).pathname
+    };
+
+    var req = http.request(options, function (r) {
+
+      // exists
+      callback(r.statusCode == 200)
+
+    });
+    req.end();
   },
 
   /**
@@ -103,9 +126,10 @@ module.exports = {
           }
 
         }
-        console.log("Destination: " + width + " " + height);
-        console.log("Resize to: " + w + " " + h);
+        console.log("Request size: " + width + " " + height);
+        console.log("Resize without crop: " + w + " " + h);
 
+        var outputFilename = cache.generateFilename({ width: width, height: height, url: reqUrl});
         /*
          * Resize
          */
@@ -113,12 +137,14 @@ module.exports = {
           .resize(w, h)
           .crop(width, height, (w-width) / 2, (h-height) / 2)
           .noProfile()
-          .write(config.outputFolder + '/' + fileName, function (err) {
+          .write(config.outputFolder + '/' + outputFilename, function (err) {
 
             if (err) {
               callback.error(err);
             } else {
-              callback.success(config.outputFolder + '/' + fileName);
+              // Remove temp file
+              fs.unlinkSync(config.tempFolder + '/' + fileName);
+              callback.success(config.outputFolder + '/' + outputFilename);
             }
 
           });
