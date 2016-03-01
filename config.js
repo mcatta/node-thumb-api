@@ -3,5 +3,7 @@ module.exports = {
   localHostAllowed : [
     'www.chiharubatolecrostate.com'
   ],
-  root : '/home'
+  root : '/home',
+  outputFolder : 'output',
+  tempFolder : 'temp'
 }

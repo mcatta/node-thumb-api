@@ -1,6 +1,7 @@
 var express = require('express'),
 	  router = new express.Router(),
 		resize = require('../modules/resize'),
+		cache9 = require('../modules/cache'),
 		config = require('../config.js');
 
 /**
@@ -76,6 +77,10 @@ router.check = function(req, res, next) {
 			next();
 
 	});
+
+},
+
+router.cache = function(req, res, next) {
 
 }
 

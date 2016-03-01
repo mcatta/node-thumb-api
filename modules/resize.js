@@ -2,6 +2,7 @@ var fs = require('fs'),
     gm = require('gm').subClass({imageMagick: true}),
     http = require('http'),
     url = require('url'),
+    sizeOf = require('image-size'),
     config = require('../config.js');
 
 module.exports = {
@@ -62,9 +63,12 @@ module.exports = {
    */
   resizePic : function(width, height, reqUrl, callback) {
 
+    /*
+     * Filename
+     */
     var fileName = url.parse(reqUrl).path.split('/');
     var fileName = fileName[fileName.length-1];
-    var file = fs.createWriteStream('temp/' + fileName);
+    var file = fs.createWriteStream(config.tempFolder + '/' + fileName);
 
     var request = http.get(reqUrl, function(response) {
 
@@ -75,18 +79,46 @@ module.exports = {
       response.on('end', function() {
 
         /*
+         * Check size
+         */
+        var dimensions = sizeOf(file.path);
+        var originalRatio = dimensions.width / dimensions.height;
+        var newRatio = width / height;
+
+        var max = Math.max(width, height)
+
+        var h = 0;
+        var w = 0;
+        /*
+         * Ratio > 1 horizontal else vertical
+         */
+        if (originalRatio != newRatio) {
+
+          if (newRatio < 1) {
+            h = max;
+            w = (dimensions.width * h) / dimensions.height;
+          } else {
+            w = max;
+            h = (w * dimensions.height) / dimensions.width;
+          }
+
+        }
+        console.log("Destination: " + width + " " + height);
+        console.log("Resize to: " + w + " " + h);
+
+        /*
          * Resize
          */
-        gm('temp/' + fileName)
-          .resize(width, height)
-          .crop(width, height, 0, 0)
+        gm(config.tempFolder + '/' + fileName)
+          .resize(w, h)
+          .crop(width, height, (w-width) / 2, (h-height) / 2)
           .noProfile()
-          .write('output/' + fileName, function (err) {
+          .write(config.outputFolder + '/' + fileName, function (err) {
 
             if (err) {
               callback.error(err);
             } else {
-              callback.success('output/' + fileName);
+              callback.success(config.outputFolder + '/' + fileName);
             }
 
           });
