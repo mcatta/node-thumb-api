@@ -1,9 +1,8 @@
 module.exports = {
-  allowExternal : false,
+  allowExternal : true,
   localHostAllowed : [
     'www.chiharubatolecrostate.com'
   ],
-  root : '/home',
-  outputFolder : 'output',
-  tempFolder : 'temp'
+  outputFolder : '/var/www/output',
+  tempFolder : '/var/www/temp'
 }

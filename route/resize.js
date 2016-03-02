@@ -1,7 +1,9 @@
 var express = require('express'),
 	  router = new express.Router(),
+		check = require('../lib/sourceValidation'),
+		resizer = require('../lib/resizer'),
 		resize = require('../modules/resize'),
-		cache = require('../modules/cache'),
+		cache = require('../lib/cache'),
 		config = require('../config.js');
 
 /**
@@ -24,7 +26,7 @@ router.execute = function(req, res, next) {
 
 	if (width && height && url) {
 
-		resize.resizePic(width, height, url, {
+		resizer.requestResize({width: width, height: height, url: url}, {
 			success: function(filePath) {
 
 				/*
@@ -80,13 +82,14 @@ router.check = function(req, res, next) {
 
 	var url = req.params.url;
 
-	resize.checkFileUrl(url, function(errCode, newPath) {
+	check.verifySource(url, function(exists, newPath) {
 
-		if (errCode)
-			res.sendStatus(errCode);
-		else {
+		console.log(exists, newPath);
+		if (exists) {
 			res.locals.url = newPath;
 			next();
+		} else {
+			res.sendStatus(404);
 		}
 
 	});
@@ -113,10 +116,6 @@ router.cache = function(req, res, next) {
 		 */
 		if (exists) {
 			var options = {
-
-				/*
- 				 *
-				 */
 				root: config.root,
 				dotfiles: 'deny',
 				headers: {
