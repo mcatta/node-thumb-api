@@ -26,3 +26,9 @@ module.exports = {
   tempFolder : '/var/www/example.com/temp'      // Temp folder
 }
 ```
+
+## Example
+When you run the script the you can use this path to resize a picture:
+
+    http://localhost:3031/resize/w400/h500/http:%2F%2Fwww.example.com%2Fmypic.jpg
+    
