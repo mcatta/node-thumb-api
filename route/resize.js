@@ -2,9 +2,8 @@ var express = require('express'),
 	  router = new express.Router(),
 		check = require('../lib/sourceValidation'),
 		resizer = require('../lib/resizer'),
-		resize = require('../modules/resize'),
 		cache = require('../lib/cache'),
-		config = require('../config.js');
+		config = require('../config');
 
 /**
  * Resize picture by params
@@ -20,20 +19,18 @@ router.execute = function(req, res, next) {
 	 */
 	var width = req.params.width;
   var height = req.params.height;
-  var url = res.locals.url;
-
-	console.log('GET params: ' + width + ' ' + height + ' ' + url);
+	var url = req.params.url;
+  var source_url = res.locals.url;
 
 	if (width && height && url) {
 
-		resizer.requestResize({width: width, height: height, url: url}, {
+		resizer.requestResize({width : width, height : height, source_url : source_url, url : url}, {
 			success: function(filePath) {
 
 				/*
  				 * Return resized file
 				 */
 				var options = {
-				  root: config.root,
 				  dotfiles: 'deny',
 				  headers: {
 				      'x-timestamp': Date.now(),
@@ -84,7 +81,6 @@ router.check = function(req, res, next) {
 
 	check.verifySource(url, function(exists, newPath) {
 
-		console.log(exists, newPath);
 		if (exists) {
 			res.locals.url = newPath;
 			next();
@@ -116,7 +112,6 @@ router.cache = function(req, res, next) {
 		 */
 		if (exists) {
 			var options = {
-				root: config.root,
 				dotfiles: 'deny',
 				headers: {
 						'x-timestamp': Date.now(),
@@ -130,7 +125,7 @@ router.cache = function(req, res, next) {
 					res.sendStatus(err.status).end();
 				}
 				else {
-					console.log('Sent:', filePath);
+					console.log('Sent cached: ' + filePath);
 				}
 			});
 
