@@ -10,5 +10,5 @@ app.route('/resize/w:width/h:height/:url')
 	.get(resize.cache)
 	.get(resize.execute);
 
-console.log('working on port 3031...');
+console.log('working on port ' + config.port + '...');
 app.listen(config.port);
