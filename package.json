@@ -1,5 +1,5 @@
 {
-  "name": "node-thumb",
+  "name": "node-thumb-api",
   "version": "1.5.0",
   "description": "Microservice to resize picture",
   "main": "index.js",
