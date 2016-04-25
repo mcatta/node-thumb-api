@@ -18,13 +18,18 @@ router.execute = function(req, res, next) {
 	 * params
 	 */
 	var width = req.params.width;
-  var height = req.params.height;
+	var height = req.params.height;
 	var url = req.params.url;
-  var source_url = res.locals.url;
 
 	if (width && height && url) {
 
-		resizer.requestResize({width : width, height : height, source_url : source_url, url : url}, {
+		resizer.requestResize({
+			width : width,
+			height : height,
+			source_url : res.locals.url,
+			url : url,
+			resizemode : res.locals.resizemode
+		}, {
 			success: function(filePath) {
 
 				/*
@@ -81,6 +86,9 @@ router.check = function(req, res, next) {
 
 	check.verifySource(url, function(exists, newPath) {
 
+		// to pass resizemode 'canvas', 'crop' etc
+		res.locals.resizemode = req.params.resizemode || 'cover';
+
 		if (exists) {
 			res.locals.url = newPath;
 			next();
@@ -104,7 +112,8 @@ router.cache = function(req, res, next) {
 	cache.checkCachedFile({
 		width: req.params.width,
 		height: req.params.height,
-		url: req.params.url
+		url: req.params.url,
+		resizemode : res.locals.resizemode
 	}, function(exists, filePath) {
 
 		/**

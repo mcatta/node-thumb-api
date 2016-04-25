@@ -10,5 +10,10 @@ app.route('/resize/w:width/h:height/:url')
 	.get(resize.cache)
 	.get(resize.execute);
 
-console.log('working on port 3031...');
+// GET /resize without cache
+app.route('/resize/w:width/h:height/:url/nocache')
+	.get(resize.check)
+	.get(resize.execute);
+
+console.log('working on port ' + config.port + '...');
 app.listen(config.port);
