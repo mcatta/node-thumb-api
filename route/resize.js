@@ -109,41 +109,48 @@ router.check = function(req, res, next) {
  */
 router.cache = function(req, res, next) {
 
-	cache.checkCachedFile({
-		width: req.params.width,
-		height: req.params.height,
-		url: req.params.url,
-		resizemode : res.locals.resizemode
-	}, function(exists, filePath) {
+	// Skip cache and resize
+	if (req.params.nocache) {
+		next();
 
-		/**
-		 * File exsists
-		 */
-		if (exists) {
-			var options = {
-				dotfiles: 'deny',
-				headers: {
-						'x-timestamp': Date.now(),
-						'x-sent': true
-				}
-			};
+	} else {
 
-			res.sendFile(filePath, options, function (err) {
-				if (err) {
-					console.log(err);
-					res.sendStatus(err.status).end();
-				}
-				else {
-					console.log('Sent cached: ' + filePath);
-				}
-			});
+		cache.checkCachedFile({
+			width: req.params.width,
+			height: req.params.height,
+			url: req.params.url,
+			resizemode : res.locals.resizemode
+		}, function(exists, filePath) {
 
-		} else {
-			// Continue resizing...
-			next();
-		}
+			/**
+			 * File exsists
+			 */
+			if (exists) {
+				var options = {
+					dotfiles: 'deny',
+					headers: {
+							'x-timestamp': Date.now(),
+							'x-sent': true
+					}
+				};
 
-	});
+				res.sendFile(filePath, options, function (err) {
+					if (err) {
+						console.log(err);
+						res.sendStatus(err.status).end();
+					}
+					else {
+						console.log('Sent cached: ' + filePath);
+					}
+				});
+
+			} else {
+				// Continue resizing...
+				next();
+			}
+
+		});
+	}
 
 }
 
