@@ -5,12 +5,7 @@ var express = require('express'),
 	resize = require('./route/resize');
 
 // GET /resize
-app.route('/resize/:resizemode/w:width/h:height/:url/:nocache?')
-	.get(resize.check)
-	.get(resize.cache)
-	.get(resize.execute);
-
-app.route('/resize/w:width/h:height/:url/:nocache?')
+app.route('/resize/:resizemode?/w:width/h:height/:url/:nocache?')
 	.get(resize.check)
 	.get(resize.cache)
 	.get(resize.execute);
