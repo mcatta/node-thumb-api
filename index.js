@@ -2,7 +2,7 @@ var express = require('express'),
 	http = require('http'),
 	app = express(),
 	config = require('./config');
-	resize = require('./route/resize');
+	resize = require('./route/resizeRoute');
 
 // GET /resize
 app.route('/resize/:resizemode?/w:width/h:height/:url/:nocache?')

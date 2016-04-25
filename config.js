@@ -2,8 +2,8 @@ module.exports = {
   port: 3031,
   allowExternal : true,
   localHostAllowed : [
-    'www.chiharubatolecrostate.com'
+    'www.example.com'
   ],
-  outputFolder : '/Users/marcocattaneo/node/node-thumb-service/output',
-  tempFolder : '/Users/marcocattaneo/node/node-thumb-service/temp'
+  outputFolder : '/var/www/example.com/output',
+  tempFolder : '/var/www/example.com/temp'
 }
