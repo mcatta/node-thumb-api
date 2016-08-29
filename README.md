@@ -37,8 +37,17 @@ You can also change resize-mode by get values: crop, contain, cover
 
 ![alt tag](https://raw.githubusercontent.com/mcatta/node-thumb-api/master/resizemode.jpg)
 
-## No cache
-To force resizing without cache use:
+## Extra params
+There some extra params for you resizing:
 
-    http://localhost:3031/resize/w400/h500/http:%2F%2Fwww.example.com%2Fmypic.jpg/nocache
+To force resizing without cache:
 
+    http://localhost:3031/resize/w400/h500/http:%2F%2Fwww.example.com%2Fmypic.jpg/?nocache=1
+
+Add blur filter
+
+    http://localhost:3031/resize/w400/h500/http:%2F%2Fwww.example.com%2Fmypic.jpg/?blur=1
+
+These params are combinables
+
+    http://localhost:3031/resize/w400/h500/http:%2F%2Fwww.example.com%2Fmypic.jpg/?blur=1&nocache=1
