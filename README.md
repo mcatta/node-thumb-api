@@ -1,5 +1,5 @@
 # node-thumb-api
-A simple API to resize image from GET params with cache support. Resize use aheckmann/gm
+A simple API to resize image from GET params with cache support. Resize use [aheckmann/gm](https://github.com/aheckmann/gm)
 
 ## Requirements
 This API use [GraphicsMagick](http://www.graphicsmagick.org/) or [ImageMagick](http://www.imagemagick.org/) so you need to install that for the correct resizing of image.
@@ -36,3 +36,9 @@ When you run the script the you can use this path to resize a picture:
 You can also change resize-mode by get values: crop, contain, cover
 
 ![alt tag](https://raw.githubusercontent.com/mcatta/node-thumb-api/master/resizemode.jpg)
+
+## No cache
+To force resizing without cache use:
+
+    http://localhost:3031/resize/w400/h500/http:%2F%2Fwww.example.com%2Fmypic.jpg/nocache
+
