@@ -28,7 +28,8 @@ router.execute = function(req, res, next) {
 			height : height,
 			source_url : res.locals.url,
 			url : url,
-			resizemode : res.locals.resizemode
+			resizemode : res.locals.resizemode,
+			query: req.query
 		}, {
 			success: function(filePath) {
 
@@ -56,7 +57,7 @@ router.execute = function(req, res, next) {
 			error: function(err) {
 
 				/*
-  		   * On resize error
+  		   		 * On resize error
 				 */
 				res.sendStatus(505);
 			}
@@ -64,9 +65,9 @@ router.execute = function(req, res, next) {
 
   } else {
 
-		/*
+	/*
      * Miss params
-		 */
+	 */
     res.sendStatus(505);
 
   }
@@ -110,7 +111,7 @@ router.check = function(req, res, next) {
 router.cache = function(req, res, next) {
 
 	// Skip cache and resize
-	if (req.params.nocache) {
+	if (req.query.nocache == 1) {
 		next();
 
 	} else {
@@ -119,7 +120,8 @@ router.cache = function(req, res, next) {
 			width: req.params.width,
 			height: req.params.height,
 			url: req.params.url,
-			resizemode : res.locals.resizemode
+			resizemode : res.locals.resizemode,
+			query: req.query
 		}, function(exists, filePath) {
 
 			/**
