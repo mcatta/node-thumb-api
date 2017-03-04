@@ -47,8 +47,8 @@ To force resizing without cache:
 
 Add blur filter
 
-    http://localhost:3031/resize/w400/h500/http:%2F%2Fwww.example.com%2Fmypic.jpg/?blur=1
+    http://localhost:3031/resize/w400/h500/http:%2F%2Fwww.example.com%2Fmypic.jpg/?blur=90 (90% for example)
 
 These params are combinables
 
-    http://localhost:3031/resize/w400/h500/http:%2F%2Fwww.example.com%2Fmypic.jpg/?blur=1&nocache=1
+    http://localhost:3031/resize/w400/h500/http:%2F%2Fwww.example.com%2Fmypic.jpg/?blur=90&nocache=1
