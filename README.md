@@ -14,17 +14,18 @@ next you need to install dependecies with
     npm install
 
 ## Configuration
-In the root of project there is config.js, inside that you will found parameters to set up temporary and cache folder.
+In the root of project there is index.js, on the top there are configuration params.
 
 ```js
-module.exports = {
-  allowExternal : true,                         // allow to resize external folder
-  localHostAllowed : [  
-    'www.example.com'                           // list of local allowed host (need allowExternal false)
-  ],
-  outputFolder : '/var/www/example.com/output', // Output/cache folder
-  tempFolder : '/var/www/example.com/temp'      // Temp folder
-}
+global.port = 3031,                                   // Service port
+global.cache = false;                                 // cache on/off
+
+global.allowExternal = true,                          // allow to resize external folder
+global.localHostAllowed = [                           // list of local allowed host (need allowExternal false)
+  'www.example.com'
+],
+global.outputFolder = '/var/www/example.com/output',  // Output/cache folder
+global.tempFolder = '/var/www/example.com/temp';      // Temp folder
 ```
 
 ## Example
@@ -46,8 +47,8 @@ To force resizing without cache:
 
 Add blur filter
 
-    http://localhost:3031/resize/w400/h500/http:%2F%2Fwww.example.com%2Fmypic.jpg/?blur=1
+    http://localhost:3031/resize/w400/h500/http:%2F%2Fwww.example.com%2Fmypic.jpg/?blur=90 (90% for example)
 
 These params are combinables
 
-    http://localhost:3031/resize/w400/h500/http:%2F%2Fwww.example.com%2Fmypic.jpg/?blur=1&nocache=1
+    http://localhost:3031/resize/w400/h500/http:%2F%2Fwww.example.com%2Fmypic.jpg/?blur=90&nocache=1

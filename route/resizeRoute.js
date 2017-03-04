@@ -2,8 +2,7 @@ var express = require('express'),
 	  router = new express.Router(),
 		check = require('../lib/sourceValidation'),
 		resizer = require('../lib/resizer'),
-		cache = require('../lib/cache'),
-		config = require('../config');
+		cache = require('../lib/cache');
 
 /**
  * Resize picture by params
@@ -111,7 +110,7 @@ router.check = function(req, res, next) {
 router.cache = function(req, res, next) {
 
 	// Skip cache and resize
-	if (req.query.nocache == 1) {
+	if (!global.cache || req.query.nocache == 1) {
 		next();
 
 	} else {
